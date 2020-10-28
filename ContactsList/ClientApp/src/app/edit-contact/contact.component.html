@@ -1,0 +1,49 @@
+<form [formGroup]="contactForm" class="form">
+  <div class="form-group">
+    <mat-form-field>
+      <mat-label>First Name</mat-label>
+      <input matInput formControlName="firstName" maxlength="40" required pattern="^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$">
+      <mat-error *ngIf="contactForm.controls.firstName.invalid">{{getErrorMessage(contactForm.controls.firstName)}}</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Last Name</mat-label>
+      <input matInput formControlName="lastName" maxlength="40"  required pattern="^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$">
+      <mat-error *ngIf="contactForm.controls.lastName.invalid">{{getErrorMessage(contactForm.controls.lastName)}}</mat-error>
+    </mat-form-field>
+  </div>
+
+
+  <div class="form-group">
+    <mat-form-field>
+      <mat-label>Middle Name</mat-label>
+      <input matInput formControlName="middleName" maxlength="40" pattern="^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$">
+      <mat-error *ngIf="contactForm.controls.middleName.invalid">{{getErrorMessage(contactForm.controls.middleName)}}</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Birth Date</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="birthDate" required>
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+      <mat-error *ngIf="contactForm.controls.birthDate.invalid">{{getErrorMessage(contactForm.controls.birthDate)}}</mat-error>
+    </mat-form-field>
+  </div>
+
+  <div class="form-group">
+    <mat-form-field>
+      <mat-label>Organization</mat-label>
+      <input matInput formControlName="organizationName" maxlength="50" required>
+      <mat-error *ngIf="contactForm.controls.organizationName.invalid">{{getErrorMessage(contactForm.controls.organizationName)}}</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Post</mat-label>
+      <input matInput formControlName="organizationPost" maxlength="50"  required>
+      <mat-error *ngIf="contactForm.controls.organizationPost.invalid">{{getErrorMessage(contactForm.controls.organizationPost)}}</mat-error>
+    </mat-form-field>
+  </div>
+
+  <div class="form-group">
+    <app-contact-infos *ngIf="isLoaded || !isEditForm" [parentFormGroup]="contactForm"></app-contact-infos>
+  </div>
+</form>
+
+<button type="submit" [disabled]="!contactForm.valid" (click)="onSubmit()">Submit</button>

@@ -1,0 +1,20 @@
+<form [formGroup]="contactInfoForm" class="contact-info-form">
+
+  <mat-form-field class="example-full-width">
+    <mat-label>Info</mat-label>
+    <input matInput maxlength="40" formControlName="value">
+    <mat-error *ngIf="contactInfoForm.controls.value.invalid">{{getErrorMessage(contactInfoForm.controls.value)}}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Type</mat-label>
+    <mat-select formControlName="type">
+      <mat-option *ngFor="let type of types | enumToArray" value="{{type.index}}">{{type.name}}</mat-option>
+    </mat-select>
+    <mat-error *ngIf="contactInfoForm.controls.type.invalid">{{getErrorMessage(contactInfoForm.controls.type)}}</mat-error>
+  </mat-form-field>
+
+  <mat-icon title="Delete" (click)="deleteInfo()">delete_outline</mat-icon>
+
+</form>
+

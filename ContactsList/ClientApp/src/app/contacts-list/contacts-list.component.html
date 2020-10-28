@@ -1,0 +1,29 @@
+<div class="search-row">
+  <input placeholder="Search" #search>
+  <button mat-raised-button (click)="addContact()">Add</button>
+</div>
+<p *ngIf="!contacts"><em>Loading...</em></p>
+
+<div *ngIf="contacts" class="mat-elevation-z8">
+  <table mat-table [dataSource]="contacts">
+
+    <mat-text-column name="firstName" [headerText]="'First Name'"></mat-text-column>
+    <mat-text-column name="lastName" [headerText]="'Last Name'"></mat-text-column>
+    <mat-text-column name="middleName" [headerText]="'Middle Name'"></mat-text-column>
+    <mat-text-column name="birthDate" [headerText]="'Birth Date'"></mat-text-column>
+    <mat-text-column name="organizationName" [headerText]="'Organization'"></mat-text-column>
+    <mat-text-column name="organizationPost" [headerText]="'Post'"></mat-text-column>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;" style="cursor: pointer" (click)="editContact(row.id)"></tr>
+
+    <ng-container matColumnDef="actions">
+      <th *matHeaderCellDef mat-header-cell></th>
+      <td *matCellDef="let row" mat-cell>
+        <mat-icon title="Delete" (click)="deleteContact($event, row.id)">delete_outline</mat-icon>
+      </td>
+    </ng-container>
+  </table>
+
+  <div *ngIf="contacts && contacts.length === 0" class="no-data">No data</div>
+</div>

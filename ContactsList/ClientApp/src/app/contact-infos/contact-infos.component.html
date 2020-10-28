@@ -1,0 +1,15 @@
+<mat-accordion>
+  <mat-expansion-panel (opened)="panelOpenState = true"
+                       (closed)="panelOpenState = false">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Contact Info
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <mat-icon (click)="onAddContactClick()" title="Add">add</mat-icon>
+    <p *ngIf="formArray && formArray.length == 0">No info</p>
+    <form [formGroup]="parentFormGroup">
+      <ng-template #dynamic></ng-template>
+    </form>
+  </mat-expansion-panel>
+</mat-accordion>
