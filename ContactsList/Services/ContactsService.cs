@@ -24,14 +24,16 @@ namespace ContactsList.Services
             _logger = logger;
         }
         
-        public List<Contact> GetContacts(string filterSearch)
+        public List<ContactDto> GetContacts(string filterSearch)
         {
-            List<Contact> contacts;
+            List<ContactDto> contacts;
             try
             {
                 if (string.IsNullOrEmpty(filterSearch))
                 {
-                    contacts = _dbContext.Contacts
+                    contacts = _dbContext
+                        .Contacts
+                        .ProjectTo<ContactDto>()
                         .ToList();
                 }
                 else
@@ -45,6 +47,7 @@ namespace ContactsList.Services
                             x.OrganizationPost.Contains(filterSearch) ||
                             x.BirthDate.ToString("dd MMM yyyy", new CultureInfo("en-US")).Contains(filterSearch) ||
                             x.ContactInfos.Any(xx => xx.Value.Contains(filterSearch)))
+                        .ProjectTo<ContactDto>()
                         .ToList();
                 }
             }
@@ -57,13 +60,32 @@ namespace ContactsList.Services
             return contacts;
         }
 
-        public Contact GetContact(long id)
+        private Contact GetContact(long id)
         {
             Contact contact;
             try
             {
                 contact = _dbContext.Contacts
                     .Include(x => x.ContactInfos)
+                    .FirstOrDefault(x => x.Id == id);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError($"{DateTime.Now:g}: {ex.Message}");
+                throw;
+            }
+
+            return contact;
+        }
+        
+        public ContactFullDto GetContactFullInfo(long id)
+        {
+            ContactFullDto contact;
+            try
+            {
+                contact = _dbContext.Contacts
+                    .Include(x => x.ContactInfos)
+                    .ProjectTo<ContactFullDto>()
                     .FirstOrDefault(x => x.Id == id);
             }
             catch(Exception ex)
@@ -91,8 +113,9 @@ namespace ContactsList.Services
             }
         }
         
-        public void UpdateContact(Contact contact, UpdateContactDto updateContactDto)
+        public void UpdateContact(UpdateContactDto updateContactDto)
         {
+            var contact = GetContact(updateContactDto.Id);
             _mapper.Map(updateContactDto, contact);
             
             try
@@ -107,10 +130,17 @@ namespace ContactsList.Services
             }
         }
         
-        public void DeleteContact(Contact contact)
+        public void DeleteContact(long id)
         {
             try
             {
+                var contact = GetContact(id);
+
+                if (contact == null)
+                {
+                    throw new Exception("Contact doesn't exist");
+                }
+                
                 _dbContext.Contacts.Remove(contact);
                 _dbContext.SaveChanges();
             }

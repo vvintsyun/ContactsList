@@ -15,12 +15,10 @@ namespace ContactsList.Controllers
     public class ContactsController : ControllerBase
     {
         private readonly IContactsService _contactsService;
-        private readonly IMapper _mapper;
 
-        public ContactsController(IContactsService contactsService, IMapper mapper)
+        public ContactsController(IContactsService contactsService)
         {
             _contactsService = contactsService;
-            _mapper = mapper;
         }
         
         [HttpGet]
@@ -32,23 +30,21 @@ namespace ContactsList.Controllers
             {
                 return NotFound();
             }
-
-            var result = _mapper.Map<List<ContactDto>>(contacts);
-            return Ok(result);
+            
+            return Ok(contacts);
         }
         
         [HttpGet("{id}")]
         public IActionResult GetContact([FromRoute] long id)
         {
-            var contact = _contactsService.GetContact(id);
+            var contact = _contactsService.GetContactFullInfo(id);
 
             if (contact == null)
             {
                 return NotFound();
             }
-
-            var result = _mapper.Map<ContactFullDto>(contact);
-            return Ok(result);
+            
+            return Ok(contact);
         }
 
         [HttpPost]
@@ -60,7 +56,6 @@ namespace ContactsList.Controllers
             }
             
             _contactsService.AddContact(addContactDto);
-
             return Ok();
         }
         
@@ -77,9 +72,7 @@ namespace ContactsList.Controllers
                 return BadRequest();
             }
 
-            var contact = _contactsService.GetContact(id);
-            _contactsService.UpdateContact(contact, updateContactDto);
-
+            _contactsService.UpdateContact(updateContactDto);
             return Ok();
         }
         
@@ -91,13 +84,7 @@ namespace ContactsList.Controllers
                 return BadRequest(ModelState);
             }
 
-            var contact = _contactsService.GetContact(id);
-            if (contact == null)
-            {
-                return NotFound();
-            }
-
-            _contactsService.DeleteContact(contact);
+            _contactsService.DeleteContact(id);
             return Ok();
         }
     }

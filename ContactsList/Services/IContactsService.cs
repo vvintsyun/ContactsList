@@ -6,10 +6,10 @@ namespace ContactsList.Services
 {
     public interface IContactsService
     {
-        List<Contact> GetContacts(string filterSearch);
-        Contact GetContact(long id);
+        List<ContactDto> GetContacts(string filterSearch);
+        ContactFullDto GetContactFullInfo(long id);
         void AddContact(AddContactDto addContactDto);
-        void UpdateContact(Contact contact, UpdateContactDto updateContactDto);
-        void DeleteContact(Contact contact);
+        void UpdateContact(UpdateContactDto updateContactDto);
+        void DeleteContact(long id);
     }
 }
