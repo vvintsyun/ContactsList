@@ -45,7 +45,7 @@ namespace ContactsList.Services
                             x.MiddleName.Contains(filterSearch) ||
                             x.OrganizationName.Contains(filterSearch) ||
                             x.OrganizationPost.Contains(filterSearch) ||
-                            x.BirthDate.ToString("dd MMM yyyy", new CultureInfo("en-US")).Contains(filterSearch) ||
+                            x.BirthDate.HasValue && x.BirthDate.Value.ToString("dd MMM yyyy", new CultureInfo("en-US")).Contains(filterSearch) ||
                             x.ContactInfos.Any(xx => xx.Value.Contains(filterSearch)))
                         .ProjectTo<ContactDto>()
                         .ToList();

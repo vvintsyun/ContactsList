@@ -5,6 +5,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {filter, debounceTime, distinctUntilChanged, tap, switchMap} from 'rxjs/operators';
 import {fromEvent} from 'rxjs';
 import {NotificationService} from '../services/error-notification.service';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-contacts-list',
@@ -36,7 +37,7 @@ export class ContactsListComponent implements OnInit {
         })
       )
       .subscribe(
-        (x: Contact[]) => this.contacts = x,
+        (x: any[]) => this.contacts = this.mapContacts(x),
         (_ => {
           this.notification.showError('Error on getting contacts was occured.');
           this.contacts = [];
@@ -47,7 +48,7 @@ export class ContactsListComponent implements OnInit {
   private getContacts() {
     this.dataService.getContacts()
       .subscribe(
-        (x: Contact[]) => this.contacts = x,
+        (x: any[]) => this.contacts = this.mapContacts(x),
         (_ => {
           this.notification.showError('Error on getting contacts was occured.');
           this.contacts = [];
@@ -68,5 +69,17 @@ export class ContactsListComponent implements OnInit {
     this.dataService.deleteContact(id)
       .subscribe(_ => this.getContacts(),
         _ => this.notification.showError('Error on deleting contact was occured.'));
+  }
+
+  private formatDate(date: Date) {
+    return date
+      ? moment(date).format('DD MMM YYYY')
+      : '';
+  }
+
+  private mapContacts(contacts) {
+    return contacts.map(
+      c => new Contact(c.id, c.firstName, c.lastName, c.middleName, this.formatDate(c.birthDate),
+        c.organizationName, c.organizationPost, c.contactInfos));
   }
 }

@@ -16,13 +16,9 @@ namespace ContactsList.Models
         public string LastName { get; set; }
         [MaxLength(40)]
         public string MiddleName { get; set; }
-        
-        [Required]
-        public DateTime BirthDate { get; set; }
-        [Required]
+        public DateTime? BirthDate { get; set; }
         [MaxLength(50)]
         public string OrganizationName { get; set; }
-        [Required]
         [MaxLength(50)]
         public string OrganizationPost { get; set; }
         

@@ -21,7 +21,7 @@
     </mat-form-field>
     <mat-form-field>
       <mat-label>Birth Date</mat-label>
-      <input matInput [matDatepicker]="picker" formControlName="birthDate" required>
+      <input matInput [matDatepicker]="picker" formControlName="birthDate">
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker #picker></mat-datepicker>
       <mat-error *ngIf="contactForm.controls.birthDate.invalid">{{getErrorMessage(contactForm.controls.birthDate)}}</mat-error>
@@ -31,12 +31,12 @@
   <div class="form-group">
     <mat-form-field>
       <mat-label>Organization</mat-label>
-      <input matInput formControlName="organizationName" maxlength="50" required>
+      <input matInput formControlName="organizationName" maxlength="50">
       <mat-error *ngIf="contactForm.controls.organizationName.invalid">{{getErrorMessage(contactForm.controls.organizationName)}}</mat-error>
     </mat-form-field>
     <mat-form-field>
       <mat-label>Post</mat-label>
-      <input matInput formControlName="organizationPost" maxlength="50"  required>
+      <input matInput formControlName="organizationPost" maxlength="50">
       <mat-error *ngIf="contactForm.controls.organizationPost.invalid">{{getErrorMessage(contactForm.controls.organizationPost)}}</mat-error>
     </mat-form-field>
   </div>

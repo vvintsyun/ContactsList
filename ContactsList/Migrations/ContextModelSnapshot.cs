@@ -25,7 +25,7 @@ namespace ContactsList.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime>("BirthDate");
+                    b.Property<DateTime?>("BirthDate");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -39,11 +39,9 @@ namespace ContactsList.Migrations
                         .HasMaxLength(40);
 
                     b.Property<string>("OrganizationName")
-                        .IsRequired()
                         .HasMaxLength(50);
 
                     b.Property<string>("OrganizationPost")
-                        .IsRequired()
                         .HasMaxLength(50);
 
                     b.HasKey("Id");

@@ -10,11 +10,7 @@ namespace ContactsList.Mapping
         public MapProfile()
         {
             CreateMap<AddContactDto, Contact>();
-            
-            CreateMap<Contact, ContactDto>()
-                .ForMember(x => x.BirthDate, 
-                    x => x.MapFrom(xx => xx.BirthDate.ToString("dd MMM yyyy", new CultureInfo("en-US"))));
-            
+
             CreateMap<Contact, ContactFullDto>()
                 .IncludeBase<Contact, ContactDto>();
             CreateMap<Contact, UpdateContactDto>();

@@ -48,7 +48,7 @@ export class ContactComponent implements OnInit {
     firstName: new FormControl(''),
     lastName: new FormControl(''),
     middleName: new FormControl(''),
-    birthDate: new FormControl(''),
+    birthDate: new FormControl(null),
     organizationName: new FormControl(''),
     organizationPost: new FormControl(''),
     contactInfos: new FormArray([])
@@ -88,7 +88,7 @@ export class ContactComponent implements OnInit {
       firstName: contact.firstName,
       lastName: contact.lastName,
       middleName: contact.middleName,
-      birthDate: new Date(Date.parse(contact.birthDate)),
+      birthDate: contact.birthDate,
       organizationName: contact.organizationName,
       organizationPost: contact.organizationPost,
       contactInfos: []
