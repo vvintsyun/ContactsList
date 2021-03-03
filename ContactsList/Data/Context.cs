@@ -27,6 +27,9 @@ namespace ContactsList
                 .HasMany(x => x.ContactInfos)
                 .WithOne(x => x.Contact)
                 .OnDelete(DeleteBehavior.Cascade);
+            
+            modelBuilder.Entity<Contact>()
+                .HasIndex(x => x.BirthDate);
         }
     }
 }

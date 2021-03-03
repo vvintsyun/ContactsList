@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Linq.Expressions;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using ContactsList.Dtos;
@@ -38,6 +39,8 @@ namespace ContactsList.Services
                 }
                 else
                 {
+                    var isDateParsed = DateTime.TryParseExact(filterSearch, "dd MMM yyyy", new CultureInfo("en-US"), DateTimeStyles.None, out var date);
+                    
                     contacts = _dbContext.Contacts
                         .Where(x =>
                             x.FirstName.Contains(filterSearch) ||
@@ -45,7 +48,7 @@ namespace ContactsList.Services
                             x.MiddleName.Contains(filterSearch) ||
                             x.OrganizationName.Contains(filterSearch) ||
                             x.OrganizationPost.Contains(filterSearch) ||
-                            x.BirthDate.HasValue && x.BirthDate.Value.ToString("dd MMM yyyy", new CultureInfo("en-US")).Contains(filterSearch) ||
+                            isDateParsed && x.BirthDate.HasValue && x.BirthDate >= date && x.BirthDate < date.AddDays(1) ||
                             x.ContactInfos.Any(xx => xx.Value.Contains(filterSearch)))
                         .ProjectTo<ContactDto>()
                         .ToList();
