@@ -34,10 +34,10 @@ namespace ContactsList.Services
             {
                 if (string.IsNullOrEmpty(filterSearch))
                 {
-                    contacts = _dbContext
+                    contacts = await _dbContext
                         .Contacts
                         .ProjectTo<ContactDto>()
-                        .ToList();
+                        .ToListAsync(ct);
                 }
                 else
                 {
