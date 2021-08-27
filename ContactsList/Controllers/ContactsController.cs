@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using ContactsList.Dtos;
@@ -22,9 +23,9 @@ namespace ContactsList.Controllers
         }
         
         [HttpGet]
-        public IActionResult GetContacts([FromQuery] string filterString)
+        public async Task<IActionResult> GetContacts([FromQuery] string filterString, CancellationToken ct)
         {
-            var contacts = _contactsService.GetContacts(filterString);
+            var contacts = await _contactsService.GetContacts(filterString, ct);
 
             if (contacts == null)
             {
@@ -35,9 +36,9 @@ namespace ContactsList.Controllers
         }
         
         [HttpGet("{id}")]
-        public IActionResult GetContact([FromRoute] long id)
+        public async Task<IActionResult> GetContact([FromRoute] long id, CancellationToken ct)
         {
-            var contact = _contactsService.GetContactFullInfo(id);
+            var contact = await _contactsService.GetContactFullInfo(id, ct);
 
             if (contact == null)
             {
@@ -48,19 +49,20 @@ namespace ContactsList.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateContact([FromBody] AddContactDto addContactDto)
+        public async Task<IActionResult> CreateContact([FromBody] AddContactDto addContactDto, CancellationToken ct)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
             
-            _contactsService.AddContact(addContactDto);
+            await _contactsService.AddContact(addContactDto, ct);
             return Ok();
         }
         
         [HttpPut("{id}")]
-        public IActionResult UpdateContact([FromRoute] long id, [FromBody] UpdateContactDto updateContactDto)
+        public async Task<IActionResult> UpdateContact([FromRoute] long id, [FromBody] UpdateContactDto updateContactDto,
+            CancellationToken ct)
         {
             if (!ModelState.IsValid)
             {
@@ -72,19 +74,19 @@ namespace ContactsList.Controllers
                 return BadRequest();
             }
 
-            _contactsService.UpdateContact(updateContactDto);
+            await _contactsService.UpdateContact(updateContactDto, ct);
             return Ok();
         }
         
         [HttpDelete("{id}")]
-        public IActionResult DeleteContact([FromRoute] long id)
+        public async Task<IActionResult> DeleteContact([FromRoute] long id, CancellationToken ct)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            _contactsService.DeleteContact(id);
+            await _contactsService.DeleteContact(id, ct);
             return Ok();
         }
     }

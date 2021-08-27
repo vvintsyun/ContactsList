@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
+using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using ContactsList.Dtos;
@@ -25,7 +27,7 @@ namespace ContactsList.Services
             _logger = logger;
         }
         
-        public List<ContactDto> GetContacts(string filterSearch)
+        public async Task<List<ContactDto>> GetContacts(string filterSearch, CancellationToken ct)
         {
             List<ContactDto> contacts;
             try
@@ -41,7 +43,7 @@ namespace ContactsList.Services
                 {
                     var isDateParsed = DateTime.TryParseExact(filterSearch, "dd MMM yyyy", new CultureInfo("en-US"), DateTimeStyles.None, out var date);
                     
-                    contacts = _dbContext.Contacts
+                    contacts = await _dbContext.Contacts
                         .Where(x =>
                             x.FirstName.Contains(filterSearch) ||
                             x.LastName.Contains(filterSearch) ||
@@ -51,7 +53,7 @@ namespace ContactsList.Services
                             isDateParsed && x.BirthDate.HasValue && x.BirthDate >= date && x.BirthDate < date.AddDays(1) ||
                             x.ContactInfos.Any(xx => xx.Value.Contains(filterSearch)))
                         .ProjectTo<ContactDto>()
-                        .ToList();
+                        .ToListAsync(ct);
                 }
             }
             catch(Exception ex)
@@ -63,14 +65,14 @@ namespace ContactsList.Services
             return contacts;
         }
 
-        private Contact GetContact(long id)
+        private async Task<Contact> GetContact(long id, CancellationToken ct)
         {
             Contact contact;
             try
             {
-                contact = _dbContext.Contacts
+                contact = await _dbContext.Contacts
                     .Include(x => x.ContactInfos)
-                    .FirstOrDefault(x => x.Id == id);
+                    .FirstOrDefaultAsync(x => x.Id == id, ct);
             }
             catch(Exception ex)
             {
@@ -81,15 +83,15 @@ namespace ContactsList.Services
             return contact;
         }
         
-        public ContactFullDto GetContactFullInfo(long id)
+        public async Task<ContactFullDto> GetContactFullInfo(long id, CancellationToken ct)
         {
             ContactFullDto contact;
             try
             {
-                contact = _dbContext.Contacts
+                contact = await _dbContext.Contacts
                     .Include(x => x.ContactInfos)
                     .ProjectTo<ContactFullDto>()
-                    .FirstOrDefault(x => x.Id == id);
+                    .FirstOrDefaultAsync(x => x.Id == id, ct);
             }
             catch(Exception ex)
             {
@@ -100,14 +102,14 @@ namespace ContactsList.Services
             return contact;
         }
 
-        public void AddContact(AddContactDto addContactDto)
+        public async Task AddContact(AddContactDto addContactDto, CancellationToken ct)
         {
             var newContact = _mapper.Map<Contact>(addContactDto);
 
             try
             {
                 _dbContext.Add(newContact);
-                _dbContext.SaveChanges();
+                await _dbContext.SaveChangesAsync(ct);
             }
             catch(Exception ex)
             {
@@ -116,15 +118,15 @@ namespace ContactsList.Services
             }
         }
         
-        public void UpdateContact(UpdateContactDto updateContactDto)
+        public async Task UpdateContact(UpdateContactDto updateContactDto, CancellationToken ct)
         {
-            var contact = GetContact(updateContactDto.Id);
+            var contact = await GetContact(updateContactDto.Id, ct);
             _mapper.Map(updateContactDto, contact);
             
             try
             {
                 _dbContext.Update(contact);
-                _dbContext.SaveChanges();
+                await _dbContext.SaveChangesAsync(ct);
             }
             catch(Exception ex)
             {
@@ -133,19 +135,19 @@ namespace ContactsList.Services
             }
         }
         
-        public void DeleteContact(long id)
+        public async Task DeleteContact(long id, CancellationToken ct)
         {
             try
             {
-                var contact = GetContact(id);
+                var contact = await GetContact(id, ct);
 
                 if (contact == null)
                 {
                     throw new Exception("Contact doesn't exist");
                 }
                 
-                _dbContext.Contacts.Remove(contact);
-                _dbContext.SaveChanges();
+                _dbContext.Remove(contact);
+                await _dbContext.SaveChangesAsync(ct);
             }
             catch(Exception ex)
             {
