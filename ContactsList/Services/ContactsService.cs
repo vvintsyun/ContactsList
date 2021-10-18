@@ -104,7 +104,7 @@ namespace ContactsList.Services
 
         public async Task AddContact(AddContactDto addContactDto, CancellationToken ct)
         {
-            var newContact = _mapper.Map<Contact>(addContactDto);
+            var newContact = new Contact(addContactDto);
 
             try
             {
